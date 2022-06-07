@@ -1,0 +1,10 @@
+come gestiamo i vincoli di tripla ugualianza?
+
+sommatoria condizionata a_k, come la si implementa nel codice?
+
+perché il solver si mette a risolvere il problema duale? é normale?
+
+ci sembra che vengano riforniti i locker e poi ma che poi i clients non vengano serviti.
+Potrebbe essere che non vengano serviti perche viene presa in considerazione un solo periodo e durante questo periodo avviene solamento lo spostamento dei pacchi nei locker
+ e solamente nel periodo successivo questi pacchi partiranno dai locker per arrivare dai clienti?
+
