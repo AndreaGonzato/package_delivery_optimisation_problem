@@ -1,14 +1,15 @@
 class Location:
+    counter = 0
 
-    x = 0
-    y = 0
+    def __new__(cls, x, y):
+        obj = object.__new__(cls)
+        return obj
 
-    def __new__(cls, *args, **kwargs):
-        return super().__new__(cls)
+    def __init__(self, x, y):
+        self.index = Location.counter
+        self.x = x
+        self.y = y
+        Location.counter += 1
 
-    def __int__(self, x_coordinate, y_coordinate):
-        self.x = x_coordinate
-        self.y = y_coordinate
-
-    def __repr__(self) -> str:
-        return "{x: "+str(self.x)+", y: "+str(self.y)+"}"
+    def __repr__(self):
+        return "{x: " + str(self.x) + " y: " + str(self.y) + "}"
