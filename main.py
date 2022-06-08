@@ -1,5 +1,5 @@
-from Location import Location
-from Locker import Locker
+from location import Location
+from locker import Locker
 
 if __name__ == "__main__":
 
