@@ -1,5 +1,6 @@
 from Locker import Locker
+from Location import Location
 
 if __name__ == "__main__":
-    l1 = Locker(1,2,3)
-    print(l1)
+    loc = Location(5,7)
+    print(loc)
