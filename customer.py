@@ -13,3 +13,13 @@ class Customer:
 
     def __repr__(self):
         return "{index: " + str(self.index) + ", location: " + str(self.location) + "}"
+
+    def get_nearest_store(self, stores):
+        min_distance = float("inf")
+        nearest_store = stores[0]
+        for store in stores:
+            distance = self.location.euclidean_distance(store.location)
+            if distance < min_distance:
+                min_distance = distance
+                nearest_store = store
+        return nearest_store
