@@ -3,7 +3,7 @@ from customer import Customer
 
 class LockerCustomer(Customer):
 
-    def __new__(cls, location, locker):
+    def __new__(cls, location, locker, package_demand=1):
         obj = object.__new__(cls)
         return obj
 
@@ -12,4 +12,5 @@ class LockerCustomer(Customer):
         self.locker = locker
 
     def __repr__(self):
-        return "{index: " + str(self.index) + ", location: " + str(self.location) + ", locker: "+ str(self.locker) + "}"
+        return "{index: " + str(self.index) + ", location: " + str(self.location) + ", locker: " + str(self.locker) +\
+               "}"

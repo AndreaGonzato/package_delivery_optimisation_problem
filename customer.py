@@ -1,7 +1,7 @@
 class Customer:
     counter = 0  # this is a static value for the class
 
-    def __new__(cls, location):
+    def __new__(cls, location, package_demand=1):
         obj = object.__new__(cls)
         return obj
 
