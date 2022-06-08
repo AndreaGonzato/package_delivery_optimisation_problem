@@ -1,7 +1,8 @@
 import math
 
+
 class Location:
-    counter = 0
+    counter = 0   # this is a static value for the class
 
     def __new__(cls, x, y):
         obj = object.__new__(cls)
