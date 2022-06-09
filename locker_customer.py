@@ -3,7 +3,7 @@ from customer import Customer
 
 class LockerCustomer(Customer):
 
-    def __new__(cls, location, locker, package_demand=1):
+    def __new__(cls, location, store, package_demand=1):
         obj = object.__new__(cls)
         return obj
 
