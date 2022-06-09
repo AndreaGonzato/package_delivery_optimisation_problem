@@ -16,6 +16,9 @@ class Store:
         Store.counter += 1
 
     def __repr__(self):
-        return "{index: " + str(self.index) + ", location: " + str(self.location) + "}"
+        if self.is_warehouse:
+            return "W"
+        else:
+            return "L" + str(self.index)
 
 

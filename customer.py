@@ -12,7 +12,7 @@ class Customer:
         Customer.counter += 1
 
     def __repr__(self):
-        return "{index: " + str(self.index) + ", location: " + str(self.location) + "}"
+        return "C" + str(self.index)
 
     def get_nearest_store(self, stores):
         min_distance = float("inf")
