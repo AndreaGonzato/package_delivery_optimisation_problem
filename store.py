@@ -36,16 +36,6 @@ class Store:
                     associated_locker_customer.append(cl)
         return associated_locker_customer
 
-    def get_nearest_store(self, stores, location):
-        min_distance = float("inf")
-        nearest_store = stores[0]
-        for store in stores:
-            distance = location.euclidean_distance(store.location)
-            if distance < min_distance:
-                min_distance = distance
-                nearest_store = store
-        return nearest_store
-
 
 
 
