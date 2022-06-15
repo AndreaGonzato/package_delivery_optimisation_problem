@@ -5,16 +5,17 @@ class Store:
     counter = 0  # this is a static value for the class
     stores = []
 
-    def __new__(cls, location, capacity, is_warehouse=False):
+    def __new__(cls, index, location, capacity, is_warehouse=False):
         obj = object.__new__(cls)
         return obj
 
-    def __init__(self, location, capacity, is_warehouse=False):
-        self.index = Store.counter
+    def __init__(self, index, location, capacity, is_warehouse=False):
+        self.index = index
         self.location = location
         self.capacity = capacity
         if self.index == 0 or is_warehouse:
             self.is_warehouse = True
+            self.capacity = float("inf")
         else:
             self.is_warehouse = False
         Store.counter += 1
