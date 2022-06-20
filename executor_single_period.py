@@ -215,9 +215,8 @@ def run_experiment_gurobi(C, L, custom_setup=False):
             array.append(distance)
         d_ak_c.insert(len(d_ak_c.columns), store, array, True)
 
-
-    d_c_k = dist_matrix.filter(items=C_D,axis=0)
-    d_c_k = d_c_k.filter(items=C_L,axis=1)
+    d_c_k = dist_matrix.filter(items=C_D, axis=0)
+    d_c_k = d_c_k.filter(items=C_L, axis=1)
 
     sum_dck_dakc = d_ak_c.to_numpy()+d_c_k.to_numpy()
 
@@ -267,8 +266,8 @@ def run_experiment_gurobi(C, L, custom_setup=False):
         index_of_cl_associated_to_closest_locker.append(OC_unique[i]+'->'+locker_where_oc_goes[OC.index(OC_unique[i])])
 
 
-    big_matrix= np.zeros((len(C_D),len(C_L)))
-    big_matrix=pd.DataFrame(big_matrix, index=C_D, columns=C_L)
+    big_matrix = np.zeros((len(C_D), len(C_L)))
+    big_matrix = pd.DataFrame(big_matrix, index=C_D, columns=C_L)
 
     for i in range(len(position_sk)):
         big_matrix.values[position_sk[i]][position_cl[i]]=d_ak_c.values[position_sk[i]][position_cl[i]]
@@ -289,9 +288,9 @@ def run_experiment_gurobi(C, L, custom_setup=False):
             if cd.door_to_door_customer_index == position_sk[s]:
                 filter_cd_sk.append(cd)
 
-    d_cd_oc=big_matrix.filter(items=OC,axis=1)
-    d_ak_c=d_cd_oc.filter(items=S_k,axis=0)
-    d_ak_c.columns= index_of_cl_associated_to_closest_locker
+    d_cd_oc = big_matrix.filter(items=OC,axis=1)
+    d_ak_c = d_cd_oc.filter(items=S_k,axis=0)
+    d_ak_c.columns = index_of_cl_associated_to_closest_locker
     d_ak_c = d_ak_c.to_numpy()
 
 
@@ -551,7 +550,11 @@ def run_experiment_gurobi(C, L, custom_setup=False):
 
     single_period_problem.optimize() #equivalent to solve() for xpress
 
-    return single_period_problem.status, single_period_problem.Runtime, single_period_problem.ObjVal
+    if single_period_problem.status == 2:
+        return single_period_problem.status, single_period_problem.Runtime, single_period_problem.ObjVal
+    else:
+        print("--------Gurobi did not find a optiml solution-----------")
+        return single_period_problem.status, single_period_problem.Runtime, None
 
 
 
