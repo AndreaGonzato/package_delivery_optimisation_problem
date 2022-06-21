@@ -145,6 +145,8 @@ def solve_period(stores, vehicles, customers):
             array.append(distance)
         d_ak_c.insert(len(d_ak_c.columns), store, array, True)
 
+
+    d_c_k = pd.DataFrame()
     d_c_k = dist_matrix.filter(items=C_D, axis=0)
     d_c_k = d_c_k.filter(items=C_L, axis=1)
 
@@ -199,13 +201,14 @@ def solve_period(stores, vehicles, customers):
         big_matrix.values[position_sk[i]][position_cl[i]] = d_ak_c.values[position_sk[i]][position_cl[i]]
 
     OC = []
-    for i in C_L:
+    for i in range(len(C_L)):
         is_all_null = True
         for j in range(len(C_D)):
-            if big_matrix.values[j][i.locker_customer_index] != 0:
+            if big_matrix.values[j][i] != 0:
                 is_all_null = False
-                OC.append(i)
+                OC.append(C_L[i])
     OC = list(OrderedSet(OC))
+    print("OC: ", OC)
 
     filter_cd_sk = []
     for cd in C_D:
@@ -215,12 +218,18 @@ def solve_period(stores, vehicles, customers):
 
     d_cd_oc = big_matrix.filter(items=OC, axis=1)
     d_ak_c = d_cd_oc.filter(items=S_k, axis=0)
+    print("d_cd_oc: ", d_cd_oc)
+
+    print("index_of_cl_associated_to_closest_locker: ", index_of_cl_associated_to_closest_locker)
     d_ak_c.columns = index_of_cl_associated_to_closest_locker
     d_ak_c = d_ak_c.to_numpy()
 
     pck = 0.5 * d_ak_c
+    print("Sk: ", Sk)
+    print("OC_unique: ", OC_unique)
+    print("pck: ", pck)
     for c in range(len(Sk)):
-        for k in range(len(OC_unique)):
+        for k in range(len(OC)):
             if pck[c][k] == 0:
                 pck[c][k] = 100000
 
