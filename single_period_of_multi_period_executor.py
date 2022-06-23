@@ -476,5 +476,5 @@ def solve_period(stores, vehicles, customers):
 
         return model.status, model.Runtime, model.ObjVal, OC, CL_dictionary
     else:
-        print("--------- model.status != 2 ------------")
+        #print("--------- model.status != 2 ------------")
         return model.status, model.Runtime, -1, OC, {}

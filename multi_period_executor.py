@@ -25,7 +25,8 @@ output sum(runtime), status=2 if all status == 2
 def run_experiment(C, L, periods):
     sum_Runtime = 0
     sum_ObjVal = 0
-    status_alway_2 = True
+    status_always_2 = True
+    all_status = []
 
     map_size = 100
     ratio_locker_customers = 0.3
@@ -136,11 +137,10 @@ def run_experiment(C, L, periods):
 
         sum_Runtime += Runtime
         sum_ObjVal += ObjVal
+        all_status.append(status)
 
         if status != 2:
-            status_alway_2 = False
-            print("-----Gurobi did not find the optimal solution for a single period------")
-            #raise Exception("-----Gurobi did not find the optimal solution for a single period------")
+            status_always_2 = False
 
         # discover the customers that did not get the package
         customer_next_period = []
@@ -169,4 +169,4 @@ def run_experiment(C, L, periods):
         current_day += 1
 
     # edn of: for day in range(periods):
-    return status_alway_2, sum_Runtime, sum_ObjVal
+    return status_always_2, all_status, sum_Runtime, sum_ObjVal
