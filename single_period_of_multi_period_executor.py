@@ -462,16 +462,19 @@ def solve_period(stores, vehicles, customers):
 
     model.optimize() #equivalent to solve() for xpress
 
-    CL_dictionary = {}
-    j = 0
-    for oc in OC:
-        i = 0
-        for sk in Sk:
-            string = "w_c_k["+str(i)+","+str(j)+"]"
-            if model.getVarByName(string).x == 1:
-                CL_dictionary[oc] = sk
-            i += 1
-        j += 1
+    if model.status == 2:
+        CL_dictionary = {}
+        j = 0
+        for oc in OC:
+            i = 0
+            for sk in Sk:
+                string = "w_c_k["+str(i)+","+str(j)+"]"
+                if model.getVarByName(string).x == 1:
+                    CL_dictionary[oc] = sk
+                i += 1
+            j += 1
 
-
-    return model.status, model.Runtime, model.ObjVal, OC, CL_dictionary
+        return model.status, model.Runtime, model.ObjVal, OC, CL_dictionary
+    else:
+        print("--------- model.status != 2 ------------")
+        return model.status, model.Runtime, -1, OC, {}
