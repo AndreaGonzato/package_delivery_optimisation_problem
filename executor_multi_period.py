@@ -34,9 +34,10 @@ def solve_period(stores, vehicles, customers):
     C_D = list(filter(lambda customer: type(customer) == DoorToDoorCustomer, customers))
     C_D_prime = list(filter(lambda customer: customer.prime, C_D))
     C_D_not_prime = list(filter(lambda customer: not customer.prime, C_D))
+    customers_did_not_get_the_package_CL = list(filter(lambda customer: customer.did_not_show_up, C_L))
 
-    print("----------C_D_prime-----------")
-    print(C_D_prime)
+    print("----------customers_did_not_get_the_package_CL-----------")
+    print(customers_did_not_get_the_package_CL)
     lockers = list(filter(lambda store: not store.is_warehouse, stores))
 
     # define some np.array to plot the map
@@ -269,9 +270,11 @@ def solve_period(stores, vehicles, customers):
             gb.quicksum(cl.package_demand for cl in l.find_associated_CL(customers, stores))
             +
             gb.quicksum(Sk[sk].package_demand*w_c_k[sk,k] for sk in range(len(Sk)) for k in range(len(OC))
-                        if lockers[l.index-1] == lockers_wrt_their_oc_array[k] )+
+                        if lockers[l.index-1] == lockers_wrt_their_oc_array[k])
+            +
             gb.quicksum(C_D[cd].package_demand*z_c_l[l.index-1,cd] for cd in range(len(C_D)))
-            <= l.capacity * z_l_L[l.index-1]
+            <= (l.capacity - gb.quicksum(c.package_demand for c in customers_did_not_get_the_package_CL)
+                - gb.quicksum(cd_no_show_up.package_demand for cd_no_show_up in C_D_prime))* z_l_L[l.index-1]
         )
 
     # Professional fleet constraint
