@@ -32,6 +32,10 @@ def solve_period(stores, vehicles, customers):
     # create sets
     C_L = list(filter(lambda customer: type(customer) == LockerCustomer, customers))
     C_D = list(filter(lambda customer: type(customer) == DoorToDoorCustomer, customers))
+    C_D_prime = list(filter(lambda customer: customer.prime, C_D))
+
+    print("----------C_D_prime-----------")
+    print(C_D_prime)
     lockers = list(filter(lambda store: not store.is_warehouse, stores))
 
     # define some np.array to plot the map
