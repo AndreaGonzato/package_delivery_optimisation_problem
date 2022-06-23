@@ -27,6 +27,9 @@ class Store:
         else:
             return "L" + str(self.index)
 
+    def set_capacity(self, capacity):
+        self.capacity = capacity
+
     def find_associated_CL(self, customers, stores):
         associated_locker_customer = []
         if not self.is_warehouse:

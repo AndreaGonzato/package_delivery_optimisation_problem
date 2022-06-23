@@ -33,6 +33,7 @@ def solve_period(stores, vehicles, customers):
     C_L = list(filter(lambda customer: type(customer) == LockerCustomer, customers))
     C_D = list(filter(lambda customer: type(customer) == DoorToDoorCustomer, customers))
     C_D_prime = list(filter(lambda customer: customer.prime, C_D))
+    C_D_not_prime = list(filter(lambda customer: not customer.prime, C_D))
 
     print("----------C_D_prime-----------")
     print(C_D_prime)
@@ -135,7 +136,7 @@ def solve_period(stores, vehicles, customers):
 
     #creation of d_ak_c
     d_ak_c = pd.DataFrame()
-    d_ak_c = dist_matrix.filter(items = C_D, axis=1)
+    d_ak_c = dist_matrix.filter(items=C_D_not_prime, axis=1)
     d_ak_c = d_ak_c.filter(items=closest_store_to_CL,axis=0)
 
 
@@ -143,7 +144,7 @@ def solve_period(stores, vehicles, customers):
     # è intuitivo che la distanza da A a B è la stessa che da B ad A
     d_c_k = pd.DataFrame()
     d_c_k = dist_matrix.filter(items=C_L,axis=0)
-    d_c_k = d_c_k.filter(items=C_D,axis=1)
+    d_c_k = d_c_k.filter(items=C_D_not_prime,axis=1)
 
 
     # find the 2 sets OC and Sk
@@ -151,13 +152,14 @@ def solve_period(stores, vehicles, customers):
     sum_dck_dakc = d_ak_c.to_numpy()+d_c_k.to_numpy()
 
     for cl in range(len(C_L)):
-        for cd in range(len(C_D)):
-            if sum_dck_dakc[cl][cd]<=1.5*d_ak_k.to_numpy()[cl]:
+        for cd in range(len(C_D_not_prime)):
+            if sum_dck_dakc[cl][cd] <= 1.5*d_ak_k.to_numpy()[cl]:
                 OC_with_duplcate.append(C_L[cl])
-                Sk_with_duplicate.append(C_D[cd])
+                Sk_with_duplicate.append(C_D_not_prime[cd])
                 position_sk.append(cd)
                 position_cl.append(cl)
                 locker_where_oc_goes.append((closest_store_to_CL[cl]))
+
 
     def unique(list1):
         # initialize a null list
@@ -186,19 +188,20 @@ def solve_period(stores, vehicles, customers):
     Sk = bubble_sort(Sk_not_ordered)
 
     #LAST STEP  create p_c_k
-    empty_matrix_Cd_Cl = np.zeros((len(C_D),len(C_L)))
-    empty_matrix_Cd_Cl = pd.DataFrame(empty_matrix_Cd_Cl, index=C_D, columns=C_L)
+    empty_matrix_Cd_Cl = np.zeros((len(C_D_not_prime),len(C_L)))
+    empty_matrix_Cd_Cl = pd.DataFrame(empty_matrix_Cd_Cl, index=C_D_not_prime, columns=C_L)
 
     for i in range(len(position_sk)):
         empty_matrix_Cd_Cl.values[position_sk[i]][position_cl[i]]=d_ak_c.values[position_cl[i]][position_sk[i]]
 
 
+
     d_sk_oc = empty_matrix_Cd_Cl.filter(items = OC, axis=1)
-    d_sk_oc = d_sk_oc.filter(items = Sk,axis=0)
+    d_sk_oc = d_sk_oc.filter(items=Sk,axis=0)
 
     #piccola digressione
     lockers_wrt_their_oc_matrix = dist_matrix.filter(items=OC,axis=1)
-    lockers_wrt_their_oc_matrix = lockers_wrt_their_oc_matrix.filter(items=stores,axis=0)
+    lockers_wrt_their_oc_matrix = lockers_wrt_their_oc_matrix.filter(items=stores, axis=0)
 
     lockers_wrt_their_oc = lockers_wrt_their_oc_matrix.idxmin()
 
@@ -216,8 +219,11 @@ def solve_period(stores, vehicles, customers):
 
     for c in range(len(Sk)):
         for k in range(len(OC)):
-            if pck[c][k]==0:
-                pck[c][k]=100000
+            if pck[c][k] == 0:
+                pck[c][k] = 100000
+
+    print("-------Sk-----------")
+    print(Sk)
 
     model = gb.Model()
     model.Params.LogToConsole = 0  # suppress the log of the model
@@ -235,11 +241,11 @@ def solve_period(stores, vehicles, customers):
     # add var to the problem
     x_i_j   =   model.addVars([(i,j) for i in range(I_PF) for j in range(J_PF)], vtype=gb.GRB.BINARY)
     x_i_j_L =   model.addVars([(i,j) for i in range(I_L) for j in range(J_L) ], vtype=gb.GRB.BINARY)
-    x_l_i_j =   model.addVars([(l,i,j) for i in range(I_LF) for j in range(J_PF) for l in range(L)], vtype=gb.GRB.BINARY)
+    x_l_i_j =   model.addVars([(l,i,j) for i in range(I_LF) for j in range(J_LF) for l in range(L)], vtype=gb.GRB.BINARY)
 
     y_i_j   =   model.addVars([(i,j) for i in range(I_PF) for j in range(J_PF)], vtype=gb.GRB.INTEGER)
     y_i_j_L =   model.addVars([(i,j) for i in range(I_L) for j in range(J_L) ], vtype=gb.GRB.INTEGER)
-    y_l_i_j =   model.addVars([(l,i,j,) for i in range(I_LF) for j in range(J_PF) for l in range(L)], vtype=gb.GRB.INTEGER)
+    y_l_i_j =   model.addVars([(l,i,j,) for i in range(I_LF) for j in range(J_LF) for l in range(L)], vtype=gb.GRB.INTEGER)
 
     z_c     =   model.addVars([c for c in range(len(C_D))],vtype=gb.GRB.BINARY)
     z_c_l   =   model.addVars([(l,c)for c in range(len(C_D)) for l in range(L)],vtype=gb.GRB.BINARY)
