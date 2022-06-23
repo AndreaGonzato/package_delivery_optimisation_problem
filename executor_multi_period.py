@@ -36,8 +36,6 @@ def solve_period(stores, vehicles, customers):
     C_D_not_prime = list(filter(lambda customer: not customer.prime, C_D))
     customers_did_not_get_the_package_CL = list(filter(lambda customer: customer.did_not_show_up, C_L))
 
-    print("----------customers_did_not_get_the_package_CL-----------")
-    print(customers_did_not_get_the_package_CL)
     lockers = list(filter(lambda store: not store.is_warehouse, stores))
 
     # define some np.array to plot the map
@@ -223,8 +221,6 @@ def solve_period(stores, vehicles, customers):
             if pck[c][k] == 0:
                 pck[c][k] = 100000
 
-    print("-------Sk-----------")
-    print(Sk)
 
     model = gb.Model()
     model.Params.LogToConsole = 0  # suppress the log of the model
