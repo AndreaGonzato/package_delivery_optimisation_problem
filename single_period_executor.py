@@ -67,8 +67,6 @@ def run_experiment_gurobi(C, L, custom_setup=False):
                 customers.append(DoorToDoorCustomer(c, counter_door_to_door_customer, location))
                 counter_door_to_door_customer += 1
 
-
-
     # create sets
     C_L = list(filter(lambda customer: type(customer) == LockerCustomer, customers))
     C_D = list(filter(lambda customer: type(customer) == DoorToDoorCustomer, customers))
@@ -95,7 +93,6 @@ def run_experiment_gurobi(C, L, custom_setup=False):
             else:
                 vehicles.append(Vehicle(store.index+1, VehicleType.LF, store, math.ceil(0.6 * store.capacity)))
 
-
     # define some np.array to plot the map
     CD_location = np.array([[0,0]])
     CL_location = np.array([[0,0]])
@@ -117,8 +114,7 @@ def run_experiment_gurobi(C, L, custom_setup=False):
     L_location = np.delete(L_location, 0, 0)
     W_location = np.delete(W_location, 0, 0)
 
-
-    #calcolo la matrice delle distanze:
+    # define distance matrix
     all_locations = np.array([])
     all_locations = np.append(all_locations,W_location)
     all_locations = np.vstack([all_locations,L_location])
@@ -131,8 +127,7 @@ def run_experiment_gurobi(C, L, custom_setup=False):
     dist_matrix = pd.DataFrame(distance_matrix(df.values, df.values), index=df.index, columns=df.index)
     matrix_distance_converted_in_numpy =dist_matrix.to_numpy()
 
-    #filter data
-
+    # filter data
     supply_distances_matrix = dist_matrix.filter(items=stores, axis=1)
     supply_distances_matrix = supply_distances_matrix.filter(items=stores, axis=0)
 
@@ -163,8 +158,6 @@ def run_experiment_gurobi(C, L, custom_setup=False):
         for j in range(1+len(C_D)):
             for k in range(1+len(C_D)):
                 LF_delivery_cost_multidim[i][j][k]=lt[j][k]
-
-
 
     col_ind = []
     d_ak_k=[]
@@ -259,8 +252,6 @@ def run_experiment_gurobi(C, L, custom_setup=False):
             if str(cd) == Sk[s]:
                 S_k.append(cd)
 
-
-
     index_of_cl_associated_to_closest_locker =[]
     for i in range(len(OC_unique)):
         index_of_cl_associated_to_closest_locker.append(OC_unique[i]+'->'+locker_where_oc_goes[OC.index(OC_unique[i])])
@@ -309,8 +300,7 @@ def run_experiment_gurobi(C, L, custom_setup=False):
     for i in range(len(OC_unique)):
         lockers_wrt_their_oc_array.append(lockers_wrt_their_oc[i])
 
-
-    single_period_problem =gb.Model()
+    single_period_problem = gb.Model()
     single_period_problem.Params.LogToConsole = 0  # suppress the log of the model
     single_period_problem.modelSense = gb.GRB.MINIMIZE  # declare mimization
 
@@ -324,20 +314,19 @@ def run_experiment_gurobi(C, L, custom_setup=False):
     J_LF = 1 + len(C_D)
 
     # add var to the problem
-    x_i_j   =   single_period_problem.addVars([(i,j) for i in range(I_PF) for j in range(J_PF)], vtype=gb.GRB.BINARY)
-    x_i_j_L =   single_period_problem.addVars([(i,j) for i in range(I_L) for j in range(J_L) ], vtype=gb.GRB.BINARY)
-    x_l_i_j =   single_period_problem.addVars([(l,i,j) for i in range(I_LF) for j in range(J_PF) for l in range(L)], vtype=gb.GRB.BINARY)
+    x_i_j = single_period_problem.addVars([(i,j) for i in range(I_PF) for j in range(J_PF)], vtype=gb.GRB.BINARY)
+    x_i_j_L = single_period_problem.addVars([(i,j) for i in range(I_L) for j in range(J_L) ], vtype=gb.GRB.BINARY)
+    x_l_i_j = single_period_problem.addVars([(l,i,j) for i in range(I_LF) for j in range(J_PF) for l in range(L)], vtype=gb.GRB.BINARY)
 
-    y_i_j   =   single_period_problem.addVars([(i,j) for i in range(I_PF) for j in range(J_PF)], vtype=gb.GRB.INTEGER)
-    y_i_j_L =   single_period_problem.addVars([(i,j) for i in range(I_L) for j in range(J_L) ], vtype=gb.GRB.INTEGER)
-    y_l_i_j =   single_period_problem.addVars([(l,i,j,) for i in range(I_LF) for j in range(J_PF) for l in range(L)], vtype=gb.GRB.INTEGER)
+    y_i_j = single_period_problem.addVars([(i,j) for i in range(I_PF) for j in range(J_PF)], vtype=gb.GRB.INTEGER)
+    y_i_j_L = single_period_problem.addVars([(i,j) for i in range(I_L) for j in range(J_L) ], vtype=gb.GRB.INTEGER)
+    y_l_i_j = single_period_problem.addVars([(l,i,j,) for i in range(I_LF) for j in range(J_PF) for l in range(L)], vtype=gb.GRB.INTEGER)
 
-    z_c     =   single_period_problem.addVars([c for c in range(len(C_D))],vtype=gb.GRB.BINARY)
-    z_c_l   =   single_period_problem.addVars([(l,c)for c in range(len(C_D)) for l in range(L)],vtype=gb.GRB.BINARY)
-    z_l_L   =   single_period_problem.addVars([l for l in range(L)],vtype=gb.GRB.BINARY)
+    z_c = single_period_problem.addVars([c for c in range(len(C_D))],vtype=gb.GRB.BINARY)
+    z_c_l = single_period_problem.addVars([(l,c)for c in range(len(C_D)) for l in range(L)],vtype=gb.GRB.BINARY)
+    z_l_L = single_period_problem.addVars([l for l in range(L)],vtype=gb.GRB.BINARY)
 
-    w_c_k   =   single_period_problem.addVars([(c,k)for k in range(len(OC_unique)) for c in range(len(Sk))],vtype=gb.GRB.BINARY)
-
+    w_c_k = single_period_problem.addVars([(c,k)for k in range(len(OC_unique)) for c in range(len(Sk))],vtype=gb.GRB.BINARY)
 
     # define constraints Customers’ service
 
@@ -369,15 +358,12 @@ def run_experiment_gurobi(C, L, custom_setup=False):
             == z_c[i]
         )
 
-
     # constraint eq. 5.2 B == C
     for i in range(len(C_D)):
         single_period_problem.addConstr(
             gb.quicksum( x_i_j[j,i+1] for j in range(len(C_D)+1))
             == z_c[i]
         )
-
-
 
     # constraint eq. 6
     single_period_problem.addConstr(
@@ -432,8 +418,6 @@ def run_experiment_gurobi(C, L, custom_setup=False):
             == z_l_L[i]
         )
 
-
-
     # constraint eq. 12
     single_period_problem.addConstr(
         gb.quicksum( x_i_j_L[0,j+1] for j in range(L))
@@ -468,7 +452,6 @@ def run_experiment_gurobi(C, L, custom_setup=False):
         )
     )
 
-
     # constraint eq. 15
     for i in range(1 + L):
         for j in range(1 + L):
@@ -493,14 +476,12 @@ def run_experiment_gurobi(C, L, custom_setup=False):
                 == z_c_l[l,i]
             )
 
-
         # constraint eq. 17.2 B == C
         for i in range(len(C_D)):
             single_period_problem.addConstr(
                 gb.quicksum( x_l_i_j[l,j,i+1] for j in range(len(C_D)+1))
                 == z_c_l[l,i]
             )
-
 
         # constraint eq. 18
         single_period_problem.addConstr(
@@ -539,7 +520,6 @@ def run_experiment_gurobi(C, L, custom_setup=False):
                 == 0
             )
 
-
     single_period_problem.setObjective(
         gb.quicksum( gb.quicksum(supply_cost.values[i][j]*x_i_j_L[i,j]   for j in range(1+L) )  for i in range(1+L))+
         gb.quicksum( gb.quicksum(pck[c][k] *w_c_k[c,k]  for c in range(len(Sk)))for k in range(len(OC_unique)))+
@@ -548,7 +528,7 @@ def run_experiment_gurobi(C, L, custom_setup=False):
                                              for j in range(1+len(C_D)))for i in range(1+len(C_D)))for l in range(L))
     )
 
-    single_period_problem.optimize() #equivalent to solve() for xpress
+    single_period_problem.optimize()  # equivalent to solve() for xpress
 
     if single_period_problem.status == 2:
         return single_period_problem.status, single_period_problem.Runtime, single_period_problem.ObjVal
