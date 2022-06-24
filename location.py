@@ -2,7 +2,7 @@ import math
 
 
 class Location:
-    counter = 0   # this is a static value for the class
+    counter = 0  # this is a static value for the class
 
     def __new__(cls, x, y):
         obj = object.__new__(cls)
@@ -20,4 +20,4 @@ class Location:
     def euclidean_distance(self, other_location):
         delta_x = self.x - other_location.x
         delt_y = self.y - other_location.y
-        return math.sqrt(delta_x*delta_x + delt_y*delt_y)
+        return math.sqrt(delta_x * delta_x + delt_y * delt_y)

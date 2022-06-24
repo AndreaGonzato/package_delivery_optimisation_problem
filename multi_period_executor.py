@@ -15,12 +15,7 @@ from store import *
 from vehicle import Vehicle
 from vehicle_type import VehicleType
 from single_period_of_multi_period_executor import solve_period
-'''
-input C, L, periods
 
-output sum(runtime), status=2 if all status == 2
-
-'''
 
 def run_experiment(C, L, periods):
     sum_Runtime = 0
@@ -36,16 +31,16 @@ def run_experiment(C, L, periods):
     gamma = []
     gamma.append(0.5)
 
-    for day in range(1, periods-1):
-        gamma.append((50 + (100-50)/(periods-day))/100)
+    for day in range(1, periods - 1):
+        gamma.append((50 + (100 - 50) / (periods - day)) / 100)
     gamma.append(1)
     current_day = 0
 
     C_per_period = []
-    for p in range(periods-1):
+    for p in range(periods - 1):
         C_per_period.append(C // periods)
 
-    C_per_period.append(C-sum(C_per_period))
+    C_per_period.append(C - sum(C_per_period))
 
     def get_nearest_store(stores, location):
         min_distance = float("inf")
@@ -65,7 +60,8 @@ def run_experiment(C, L, periods):
             location = Location(random.randint(0, map_size), random.randint(0, map_size))
             if random.random() < ratio_locker_customers:
                 # customer locker
-                customers.append(LockerCustomer(c, counter_locker_customer, location, get_nearest_store(stores, location)))
+                customers.append(
+                    LockerCustomer(c, counter_locker_customer, location, get_nearest_store(stores, location)))
                 counter_locker_customer += 1
             else:
                 # door to door customer
@@ -84,17 +80,19 @@ def run_experiment(C, L, periods):
 
     else:
         stores = []
-        stores.append(Store(0, Location(random.randint(0, map_size), random.randint(0, map_size)), capacity=float("inf"), is_warehouse=True))
+        stores.append(
+            Store(0, Location(random.randint(0, map_size), random.randint(0, map_size)), capacity=float("inf"),
+                  is_warehouse=True))
         for l in range(L):
-            stores.append(Store(l+1, Location(random.randint(0, map_size), random.randint(0, map_size)), capacity=math.ceil(capacity_constant * C_per_period[0] / L)))
-
+            stores.append(Store(l + 1, Location(random.randint(0, map_size), random.randint(0, map_size)),
+                                capacity=math.ceil(capacity_constant * C_per_period[0] / L)))
 
     # generate all_customer for all the periods and put them in the right period to be served
     all_customers = generate_C_customers(C, stores)
     customers_per_period = []
     counter_customer = 0
     for day in range(periods):
-        customers_per_period.append(all_customers[0+counter_customer:counter_customer+C_per_period[day]])
+        customers_per_period.append(all_customers[0 + counter_customer:counter_customer + C_per_period[day]])
         counter_customer += C_per_period[day]
 
     customers = customers_per_period[current_day]
@@ -123,8 +121,7 @@ def run_experiment(C, L, periods):
                 vehicles.append(Vehicle(0, VehicleType.LOCKER_SUPPLY, store, math.ceil(0.8 * sum_W_l)))
                 vehicles.append(Vehicle(1, VehicleType.PF, store, math.ceil(0.5 * len(C_D))))
             else:
-                vehicles.append(Vehicle(store.index+1, VehicleType.LF, store, math.ceil(0.6 * store.capacity)))
-
+                vehicles.append(Vehicle(store.index + 1, VehicleType.LF, store, math.ceil(0.6 * store.capacity)))
 
     current_day = 0
     for day in range(periods):
@@ -156,15 +153,15 @@ def run_experiment(C, L, periods):
             if type(c) == DoorToDoorCustomer:
                 c.set_prime(True)
 
-        customers_did_not_get_the_package_CL = list(filter(lambda customer: type(customer) == LockerCustomer, customers_did_not_get_the_package))
+        customers_did_not_get_the_package_CL = list(
+            filter(lambda customer: type(customer) == LockerCustomer, customers_did_not_get_the_package))
         for c in customers_did_not_get_the_package_CL:
             c.set_did_not_show_up(True)
 
         # add the new customer of the next period
-        if current_day+1 < periods:
-            customer_next_period = customers_per_period[current_day+1]
+        if current_day + 1 < periods:
+            customer_next_period = customers_per_period[current_day + 1]
             customers = customers_did_not_get_the_package + customer_next_period
-
 
         current_day += 1
 

@@ -39,9 +39,3 @@ class Store:
                 if cl.get_nearest_store(stores).index == self.index:
                     associated_locker_customer.append(cl)
         return associated_locker_customer
-
-
-
-
-
-
