@@ -15,3 +15,7 @@ The original [paper](paper.pdf) presents two mathematical optimization model:
     that is implemented in [multi_period_problem_gurobi](multi_period_problem_gurobi.ipynb)
     
   Then there are two notebooks [scability_single_period_analysis](scability_single_period_analysis.ipynb) and [scalability_multi_period_analysis](scalability_multi_period_analysis.ipynb) that illustrate how the models behave when the instance of the problem increases
+
+
+## Result
+A brief presentation of the results that we collected for this project can be viewed on this [pdf](presentation.pdf)
