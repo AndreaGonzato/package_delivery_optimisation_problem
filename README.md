@@ -1,5 +1,6 @@
 # package delivery optimisation problem
-This is a project for the "Mathematical Optimisation" course at University of Trieste.
+
+This is a project for the course "Mathematical Optimisation" at the University of Trieste.
 
 The aim of the project is to reproduce the mathematical optimization model presented in this original [paper](paper.pdf)
 
